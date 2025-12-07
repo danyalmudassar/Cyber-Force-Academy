@@ -95,9 +95,56 @@ class Enrollment(models.Model):
     rating = models.FloatField(default=5.0)
 
 
-# One enrollment could have multiple submission
-# One submission could have multiple choices
-# One choice could belong to multiple submissions
-#class Submission(models.Model):
-#    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
-#    choices = models.ManyToManyField(Choice)
+class Question(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    content = models.CharField(max_length=200)
+    grade = models.IntegerField(default=50)
+    question_type = models.CharField(max_length=20, choices=[
+        ('multiple_choice', 'Multiple Choice'),
+        ('true_false', 'True/False'),
+        ('short_answer', 'Short Answer'),
+    ], default='multiple_choice')
+    difficulty_level = models.CharField(max_length=20, choices=[
+        ('easy', 'Easy'),
+        ('medium', 'Medium'),
+        ('hard', 'Hard'),
+    ], default='medium')
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return "Question: " + self.content
+
+    # method to calculate if the learner gets the score of the question
+    def is_get_score(self, selected_ids):
+        all_answers = self.choice_set.filter(is_correct=True).count()
+        selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+        if all_answers == selected_correct:
+            return True
+        else:
+            return False
+
+
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    content = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)
+
+
+class Submission(models.Model):
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+    choices = models.ManyToManyField(Choice)
+    timestamp = models.DateTimeField(null=True, blank=True)  # Will be set in the view
+    exam_session_time = models.IntegerField(null=True, blank=True)  # Time taken in seconds
+
+
+class ExamSession(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    start_time = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    time_remaining = models.IntegerField(null=True, blank=True)  # For timed exams
+    is_active = models.BooleanField(default=True)
+    total_time_allowed = models.IntegerField(null=True, blank=True)  # Time allowed in seconds
+
+    def __str__(self):
+        return f"Exam Session: {self.user.username} - {self.course.name}"
