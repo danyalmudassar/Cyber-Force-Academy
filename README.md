@@ -128,9 +128,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-Your Name - [your.email@example.com](mailto:your.email@example.com)
+Your Name - [danyalmudassar823@gmail.com](danyalmudassar823@gmail.com)
 
-Project Link: [https://github.com/YOUR-USERNAME/cyber-force-academy](https://github.com/YOUR-USERNAME/cyber-force-academy)
+Project Link: [https://github.com/danyalmudassar/cyber-force-academy](https://github.com/danyalmudassar/cyber-force-academy)
 
 ## ⭐ Acknowledgments
 
