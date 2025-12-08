@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>My Courses | Cyber Force Academy</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .course-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .progress {
+            height: 10px;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            margin-top: 60px;
+            padding: 40px 0;
+        }
+        .breadcrumb {
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'onlinecourse:index' %}">
+                <i class="bi bi-shield-lock me-2" style="color: #005493;"></i>
+                <span class="fw-bold">Cyber Force Academy</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'onlinecourse:index' %}"><i class="bi bi-house-door"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'onlinecourse:my_courses' %}"><i class="bi bi-journal-bookmark"></i> My Courses</a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.first_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'onlinecourse:logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item me-2">
+                        <a class="btn btn-outline-primary" href="{% url 'onlinecourse:login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{% url 'onlinecourse:registration' %}"><i class="bi bi-person-plus"></i> Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'onlinecourse:index' %}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Courses</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="container flex-grow-1 py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold"><i class="bi bi-journal-bookmark me-2"></i>My Courses</h2>
+        </div>
+        
+        {% if enrollments %}
+            <div class="row">
+                {% for enrollment in enrollments %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card course-card h-100 shadow-sm">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                {% if enrollment.course.image %}
+                                <img src="{{MEDIA_URL}}{{ enrollment.course.image }}" class="img-fluid h-100 rounded-start object-fit-cover" style="max-height: 200px;" alt="{{ enrollment.course.name }}">
+                                {% else %}
+                                <div class="bg-primary d-flex align-items-center justify-content-center h-100 rounded-start">
+                                    <i class="bi bi-mortarboard text-white" style="font-size: 3rem;"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">{{ enrollment.course.name }}</h5>
+                                    <p class="card-text text-muted small">{{ enrollment.course.description|truncatewords:20 }}</p>
+                                    
+                                    <div class="mb-2">
+                                        <span class="badge bg-info">{{ enrollment.course.level|title }}</span>
+                                        <span class="badge bg-secondary ms-1">{{ enrollment.course.category|title }}</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="w-75">
+                                            <div class="progress mb-1" style="height: 8px;">
+                                                <div class="progress-bar" role="progressbar" style="width: {{ enrollment.progress }}%;" aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <small class="text-muted">{{ enrollment.progress|floatformat:0 }}% complete</small>
+                                        </div>
+                                        {% if enrollment.completed %}
+                                        <span class="badge bg-success">Completed</span>
+                                        {% else %}
+                                        <span class="badge bg-warning">In Progress</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <a href="{% url 'onlinecourse:course_details' enrollment.course.id %}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-play-circle me-1"></i> Continue
+                                        </a>
+                                        <a href="{% url 'onlinecourse:course_progress' enrollment.course.id %}" class="btn btn-outline-primary btn-sm ms-2">
+                                            <i class="bi bi-bar-chart me-1"></i> Progress
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-journal-bookmark" style="font-size: 4rem; color: #ccc;"></i>
+                <h3 class="mt-3">No courses enrolled yet</h3>
+                <p class="text-muted">Start your learning journey by enrolling in a course.</p>
+                <a href="{% url 'onlinecourse:index' %}" class="btn btn-primary">
+                    <i class="bi bi-mortarboard me-1"></i> Browse Courses
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Cyber Force Academy</h5>
+                    <p class="text-light">Empowering cybersecurity professionals with advanced training and cutting-edge education since 2025.</p>
+                </div>
+                
+                <div class="col-md-2 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'onlinecourse:index' %}" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">About</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Courses</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Popular Courses</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Cybersecurity</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Data Science</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Cloud Computing</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Web Development</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3">
+                    <h5>Need Help?</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-headset me-2"></i>Support Center</a></li>
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-question-circle me-2"></i>FAQs</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p class="mb-0 text-light">&copy; 2025 Cyber Force Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

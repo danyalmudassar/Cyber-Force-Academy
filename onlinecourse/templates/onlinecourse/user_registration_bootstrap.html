@@ -2,63 +2,188 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Sign Up | Cyber Force Academy</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #005493 0%, #007bff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .register-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .register-left {
+            background: linear-gradient(135deg, #005493 0%, #007bff 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .register-right {
+            padding: 40px;
+        }
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .form-control:focus {
+            border-color: #005493;
+            box-shadow: 0 0 0 0.25rem rgba(0, 84, 147, 0.25);
+        }
+        .btn-primary {
+            background-color: #005493;
+            border-color: #005493;
+        }
+        .btn-primary:hover {
+            background-color: #003d6d;
+            border-color: #003d6d;
+        }
+        .navbar-brand {
+            color: white !important;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .feature-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .feature-list i {
+            margin-right: 10px;
+            color: #66ff66;
+        }
+    </style>
 </head>
 <body>
-
     <!-- Navigation bar -->
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
-                <li>
-                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
-                </li>
-                {% else %}
-                <li>
-                    <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Username" name="username" >
-                            <input type="password" class="form-control" placeholder="Username" name="psw" >
-                            <button class="btn btn-primary" type="submit">Login</button>
-                            <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
-                        </div>
-                    </form>
-                </li>
-                {% endif %}
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'onlinecourse:index' %}">
+                <i class="bi bi-shield-lock me-2"></i>
+                <span>Cyber Force Academy</span>
+            </a>
         </div>
     </nav>
 
-    <!-- Stylize Registration form -->
-    <form action="{% url 'onlinecourse:registration' %}" method="post">
-        <div class="container"> <!--Style root div with .container class -->
-            {% csrf_token %}
-            <h1>Sign Up</h1>
-            <hr>
-            <div class="form-group"> <!--Style second div with .form-group class -->
-                <label for="username"><b>User Name</b></label>
-                <input type="text" class="form-control" placeholder="Enter User Name: " name="username" required> <!--Style input with .form-control class -->
-                <label for="firstname"><b>First Name</b></label>
-                <input type="text" class="form-control" placeholder="Enter First Name: " name="firstname" required> <!--Style input with .form-control class -->
-                <label for="lastname"><b>Last Name</b></label>
-                <input type="text" class="form-control" placeholder="Enter Last Name: " name="lastname" required> <!--Style input with .form-control class -->
-                <label for="psw"><b>Password</b></label>
-                <input type="password" class="form-control" placeholder="Enter Password: " name="psw" required> <!--Style input with .form-control class -->
-                {% if message %}
-                <div class="alert alert-warning"> <!--Style the message paragraph with .alert and .alert-warning class -->
-                    {{ message }}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="register-container">
+                    <div class="row g-0">
+                        <div class="col-md-5 d-none d-md-block register-left">
+                            <div class="text-center">
+                                <div class="logo">
+                                    <i class="bi bi-person-plus"></i>
+                                </div>
+                                <h2 class="fw-bold">Join Our Community</h2>
+                                <p class="mb-4">Create an account to start your learning journey with us.</p>
+                                
+                                <ul class="feature-list text-start">
+                                    <li><i class="bi bi-check-circle-fill"></i> Access to 100+ premium courses</li>
+                                    <li><i class="bi bi-check-circle-fill"></i> Expert instructors and content</li>
+                                    <li><i class="bi bi-check-circle-fill"></i> Interactive learning experience</li>
+                                    <li><i class="bi bi-check-circle-fill"></i> Certificates upon completion</li>
+                                    <li><i class="bi bi-check-circle-fill"></i> Community support and forums</li>
+                                </ul>
+                                
+                                <div class="mt-4">
+                                    <i class="bi bi-people" style="font-size: 5rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-7 register-right">
+                            <div class="text-center mb-4">
+                                <h3 class="fw-bold">Create Your Account</h3>
+                                <p class="text-muted">Fill in your details to get started</p>
+                            </div>
+                            
+                            <!-- Registration Form -->
+                            <form action="{% url 'onlinecourse:registration' %}" method="post">
+                                {% csrf_token %}
+                                
+                                {% if message %}
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="firstname" class="form-label fw-bold">First Name</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lastname" class="form-label fw-bold">Last Name</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter your last name" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="username" class="form-label fw-bold">Username</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                        <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="psw" class="form-label fw-bold">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                        <input type="password" class="form-control" id="psw" name="psw" placeholder="Create a password" required>
+                                    </div>
+                                    <div class="form-text">Use at least 8 characters with a mix of letters, numbers, and symbols.</div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="terms" required>
+                                        <label class="form-check-label" for="terms">
+                                            I agree to the <a href="#" class="text-decoration-none">Terms and Conditions</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                                    <i class="bi bi-person-plus me-2"></i>Create Account
+                                </button>
+                                
+                                <div class="text-center mt-3">
+                                    <p class="mb-0">Already have an account? <a href="{% url 'onlinecourse:login' %}" class="text-decoration-none">Sign In</a></p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                {% endif %}
-                <button class="btn btn-primary" type="submit">Sign up</button> <!--Style button with .btn and .btn-primary class -->
             </div>
         </div>
-    </form>
+    </div>
 
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+</html>

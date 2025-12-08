@@ -1,177 +1,352 @@
-body {font-family: Arial, Helvetica, sans-serif;}
-* {box-sizing: border-box}
+/* Cyber Academy Professional Styling */
 
+/* Base styles */
+:root {
+  --primary-color: #005493;
+  --primary-dark: #003d6d;
+  --secondary-color: #007bff;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --gray-color: #6c757d;
+  --border-color: #dee2e6;
+}
 
-/* Add a gray background color with some padding */
 body {
-  font-family: Arial;
-  padding: 10px;
-  background: #ececec;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f7fa;
 }
 
-/* Header/Blog Title */
-.header {
-  padding: 30px;
-  font-size: 40px;
-  text-align: center;
-  background: white;
+/* Navigation styles */
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
-
-/* Create two unequal columns that floats next to each other */
-/* Left column */
-.leftcolumn {
-  float: left;
-  width: 75%;
+.navbar-nav .nav-link {
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-/* Right column */
-.rightcolumn {
-  float: left;
-  width: 25%;
-  padding-left: 20px;
+.navbar-nav .nav-link:hover {
+  color: var(--primary-color) !important;
 }
 
-/* Fake image */
-.fakeimg {
-  background-color: #aaa;
-  width: 100%;
-  padding: 20px;
-}
-
-/* Add a card effect for articles */
+/* Card styles */
 .card {
-   background-color: white;
-   padding: 20px;
-   margin-top: 20px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* Footer */
-.footer {
-  padding: 20px;
-  text-align: center;
-  background: #ddd;
-  margin-top: 20px;
-}
-
-/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-  .leftcolumn, .rightcolumn {
-    width: 100%;
-    padding: 0;
-  }
-}
-
-
-.button {
   border: none;
-  color: white;
-  padding: 14px 28px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #005493;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.container {
-  padding: 64px;
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.12);
 }
 
-.small-container {
-  padding: 16px;
+.card-header {
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
 }
 
-.rightalign {
-    float: right;
-}
-
-
-.column {
-  float: left;
-  width: 33.33%;
-  padding: 5px;
-}
-
-
-/* 2/3 column */
-.column-66 {
-  float: left;
-  width: 66.66666%;
-  padding: 20px;
-}
-
-/* 1/3 column */
-.column-33 {
-  float: left;
-  width: 33.33333%;
-  padding: 20px;
-}
-
-/* Add responsiveness - make the columns appear on top of each other instead of next to each other on small screens */
-@media screen and (max-width: 1000px) {
-  .column-66,
-  .column-33 {
-    width: 100%;
-    text-align: center;
-  }
-}
-
-/* Full-width input fields */
-input[type=text], input[type=password] {
-  width: 100%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
-  display: inline-block;
-  border: none;
-  background: #dadfe1;
-}
-
-input[type=text]:focus, input[type=password]:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-.red{
-    color:red
-}
-
-.dropbtn {
-  background-color: #005493;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
+/* Button styles */
+.btn {
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   border: none;
 }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Form styles */
+.form-control {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 84, 147, 0.25);
+}
+
+.input-group-text {
+  border-radius: 8px 0 0 8px;
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color);
+}
+
+/* Badge styles */
+.badge {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Alert styles */
+.alert {
+  border-radius: 10px;
+  border: none;
+}
+
+/* Link styles */
+a {
   text-decoration: none;
-  display: block;
+  transition: all 0.3s ease;
 }
 
-.dropdown-content a:hover {background-color: #ddd;}
+a:hover {
+  text-decoration: none;
+}
 
-.dropdown:hover .dropdown-content {display: block;}
+/* Breadcrumb styles */
+.breadcrumb {
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 1rem;
+}
 
-.dropdown:hover .dropbtn {background-color: darkblue;}
+.breadcrumb-item.active {
+  color: var(--gray-color);
+}
+
+/* Footer styles */
+footer {
+  margin-top: auto;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .card {
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* Course listing enhancements */
+.course-card {
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-card .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.course-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Lesson and question enhancements */
+.lesson-card {
+  border-left: 4px solid var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.lesson-card:hover {
+  border-left-color: var(--secondary-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.question-card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Progress bar styling */
+.progress {
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Accordion styling */
+.accordion-button:not(.collapsed) {
+  color: var(--primary-color);
+  background-color: rgba(0, 84, 147, 0.05);
+}
+
+.accordion-button:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 84, 147, 0.25);
+}
+
+/* Custom utility classes */
+.text-primary-dark {
+  color: var(--primary-dark) !important;
+}
+
+.bg-primary-gradient {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.shadow-lg {
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+}
+
+.rounded-xl {
+  border-radius: 1rem !important;
+}
+
+.py-6 {
+  padding-top: 4rem !important;
+  padding-bottom: 4rem !important;
+}
+
+/* Icon enhancements */
+.bi {
+  vertical-align: -0.125em;
+}
+
+/* Animation for interactive elements */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Enhanced lesson completion styling */
+.lesson-item.completed {
+  border-left-color: #28a745 !important;
+}
+
+.lesson-item.in-progress {
+  border-left-color: #007bff !important;
+}
+
+.lesson-item.not-started {
+  border-left-color: #dee2e6 !important;
+}
+
+/* Progress bar enhancements */
+.progress-bar-animated {
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+  0% {
+    background-position: 1rem 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* Card hover effects */
+.card-enhanced {
+  transition: all 0.3s ease;
+}
+
+.card-enhanced:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* Button enhancements */
+.btn-enhanced {
+  transition: all 0.3s ease;
+}
+
+.btn-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+/* Search bar enhancements */
+.search-container {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.search-input {
+  padding-left: 40px;
+}

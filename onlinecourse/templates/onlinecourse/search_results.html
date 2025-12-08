@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results | Cyber Force Academy</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .course-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .course-image {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px 12px 0 0;
+        }
+        .course-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.8rem;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            margin-top: 60px;
+            padding: 40px 0;
+        }
+        .site-title {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .enroll-btn {
+            transition: all 0.3s;
+        }
+        .enroll-btn:hover {
+            transform: scale(1.05);
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #005493 0%, #007bff 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+        }
+        .search-bar {
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand site-title d-flex align-items-center" href="{% url 'onlinecourse:index' %}">
+                <i class="bi bi-shield-lock me-2"></i>
+                <span>Cyber Force Academy</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <form class="d-flex me-auto" action="{% url 'onlinecourse:search' %}" method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="q" placeholder="Search courses..." value="{{ query }}">
+                        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+                
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'onlinecourse:index' %}"><i class="bi bi-house-door"></i> Home</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'onlinecourse:my_courses' %}"><i class="bi bi-journal-bookmark"></i> My Courses</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.first_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'onlinecourse:logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item me-2">
+                        <a class="btn btn-outline-primary" href="{% url 'onlinecourse:login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{% url 'onlinecourse:registration' %}"><i class="bi bi-person-plus"></i> Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Header -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center mb-5">
+                <h1 class="display-4 fw-bold">Search Results</h1>
+                {% if query %}
+                <p class="lead">Results for: <strong>{{ query }}</strong></p>
+                {% else %}
+                <p class="lead">Please enter a search term</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Results content -->
+    <div class="container flex-grow-1">
+        {% if course_list %}
+            <div class="row g-4">
+                {% for course in course_list %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card h-100">
+                        {% if course.image %}
+                        <img src="{{MEDIA_URL}}{{ course.image }}" class="card-img-top course-image" alt="{{ course.name }}">
+                        {% else %}
+                        <div class="bg-primary d-flex align-items-center justify-content-center course-image">
+                            <i class="bi bi-mortarboard text-white" style="font-size: 3rem;"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary course-badge">{{ course.total_enrollment }} enrolled</span>
+                                <span class="badge bg-info">{{ course.level|title }}</span>
+                            </div>
+                            
+                            <h5 class="card-title fw-bold">{{ course.name }}</h5>
+                            <p class="card-text text-muted flex-grow-1">{{ course.description|truncatewords:30 }}</p>
+                            
+                            <div class="mt-auto pt-2">
+                                <div class="d-flex justify-content-between text-muted mb-2">
+                                    <small><i class="bi bi-journal-text"></i> {{ course.get_lessons_count }} lessons</small>
+                                    <small><i class="bi bi-file-earmark-text"></i> {{ course.get_questions_count }} quizzes</small>
+                                </div>
+                                
+                                {% if user.is_authenticated %}
+                                    {% if course.is_enrolled %}
+                                        <a href="{% url 'onlinecourse:course_details' course.id %}" class="btn btn-success w-100">
+                                            <i class="bi bi-play-circle me-1"></i> Continue
+                                        </a>
+                                    {% else %}
+                                        <form action="{% url 'onlinecourse:enroll' course.id %}" method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <input class="btn btn-primary w-100" type="submit" value="Enroll Now">
+                                        </form>
+                                    {% endif %}
+                                {% else %}
+                                    <a href="{% url 'onlinecourse:login' %}" class="btn btn-primary w-100">Enroll Now</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-search" style="font-size: 4rem; color: #ccc;"></i>
+                <h3 class="mt-3">No courses found</h3>
+                <p class="text-muted">We couldn't find any courses matching your search.</p>
+                <a href="{% url 'onlinecourse:index' %}" class="btn btn-primary">
+                    <i class="bi bi-arrow-left me-1"></i> Back to All Courses
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Cyber Force Academy</h5>
+                    <p class="text-light">Empowering cybersecurity professionals with advanced training and cutting-edge education since 2025.</p>
+                </div>
+                
+                <div class="col-md-2 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'onlinecourse:index' %}" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="{% url 'onlinecourse:my_courses' %}" class="text-light text-decoration-none">My Courses</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">About</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Popular Courses</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Cybersecurity</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Data Science</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Cloud Computing</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Web Development</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3">
+                    <h5>Need Help?</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-headset me-2"></i>Support Center</a></li>
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-question-circle me-2"></i>FAQs</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p class="mb-0 text-light">&copy; 2025 Cyber Force Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

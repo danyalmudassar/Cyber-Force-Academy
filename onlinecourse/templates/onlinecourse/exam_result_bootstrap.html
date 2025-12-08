@@ -2,74 +2,287 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Exam Result | Cyber Force Academy</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .result-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .result-header {
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+        .success-bg {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        .failure-bg {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+        }
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        .result-summary {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            margin-top: 60px;
+            padding: 40px 0;
+        }
+        .question-card {
+            border-left: 4px solid #007bff;
+            margin-bottom: 20px;
+        }
+        .correct-answer {
+            color: #28a745;
+            background-color: #d4edda;
+        }
+        .wrong-answer {
+            color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .not-selected {
+            color: #856404;
+            background-color: #fff3cd;
+        }
+        .breadcrumb {
+            background-color: transparent;
+        }
+    </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'onlinecourse:index' %}">
+                <i class="bi bi-shield-lock me-2" style="color: #005493;"></i>
+                <span class="fw-bold">Cyber Force Academy</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'onlinecourse:index' %}"><i class="bi bi-house-door"></i> Home</a>
+                    </li>
 
- <nav class="navbar navbar-light bg-light">
-    <div class="container-fluid">
-        <div class="navbar-header">
-              <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>
-        </div>
-        <ul class="nav navbar-nav navbar-right">
-            {% if user.is_authenticated %}
-            <li>
-                <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-                <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
-            </li>
-            {% else %}
-            <li>
-                <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Username" name="username" >
-                        <input type="password" class="form-control" placeholder="Username" name="psw" >
-                        <button class="btn btn-primary" type="submit">Login</button>
-                        <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
-                    </div>
-                </form>
-            </li>
-            {% endif %}
-        </ul>
-    </div>
-</nav>
-
-<div class="container-fluid">
-    {% if grade >= 80 %}
-    <div class="alert alert-success">
-       <h4>Congratulations, {{ user.first_name }}! You passed the exam with a grade of {{ grade }}%</h4>
-    </div>
-    {% else %}
-    <div class="alert alert-danger">
-        <h4>Failed - Sorry, {{ user.first_name }}! You have failed the exam with score {{ grade }}%</h4>
-    </div>
-    <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
-    {% endif %}
-
-    <div class="card-columns-vertical mt-1">
-        <h5 class="">Exam results</h5>
-        {% for question in course.question_set.all %}
-        <div class="card mt-1">
-            <div class="card-header"><h5>{{ question.content }}</h5></div>
-            <div class="form-group">
-                {% for choice in question.choice_set.all %}
-                <div class="form-check">
-                    {% if choice.is_correct and choice in choices %}
-                    <div class="text-success">Correct answer: {{ choice.content }}</div>
-                    {% else %}{% if choice.is_correct and not choice in choices %}
-                    <div class="text-warning">Not selected: {{ choice.content }}</div>
-                    {% else %}{% if not choice.is_correct and choice in choices %}
-                    <div class="text-danger">Wrong answer: {{ choice.content }}</div>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'my_courses' %}active{% endif %}" href="{% url 'onlinecourse:my_courses' %}"><i class="bi bi-journal-bookmark"></i> My Courses</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.first_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> My Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'onlinecourse:logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
                     {% else %}
-                    <div>{{ choice.content }}</div>
-                    {% endif %}{% endif %}{% endif %}
-                </div>
-                {% endfor %}
+                    <li class="nav-item me-2">
+                        <a class="btn btn-outline-primary" href="{% url 'onlinecourse:login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{% url 'onlinecourse:registration' %}"><i class="bi bi-person-plus"></i> Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
-        {% endfor %}
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'onlinecourse:index' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'onlinecourse:course_details' course.id %}">{{ course.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Exam Result</li>
+            </ol>
+        </nav>
     </div>
-</div>
+
+    <div class="container flex-grow-1 py-5">
+        {% if grade >= 80 %}
+        <!-- Success Result -->
+        <div class="card result-card">
+            <div class="result-header success-bg">
+                <div class="result-icon">
+                    <i class="bi bi-emoji-laughing"></i>
+                </div>
+                <h1 class="display-4 fw-bold">Congratulations!</h1>
+                <p class="lead">You've successfully completed the exam with flying colors!</p>
+                <div class="result-summary">{{ grade }}%</div>
+                <p class="lead">Excellent work, {{ user.first_name }}! Your knowledge is impressive.</p>
+            </div>
+            
+            <div class="card-body text-center py-5">
+                <div class="row">
+                    <div class="col-md-6 mx-auto">
+                        <div class="alert alert-success">
+                            <h5><i class="bi bi-trophy me-2"></i>Certification Ready</h5>
+                            <p>You've earned the right to claim your certificate for this course.</p>
+                        </div>
+                        
+                        <a href="{% url 'onlinecourse:course_details' course.id %}" class="btn btn-success btn-lg me-2">
+                            <i class="bi bi-journal-bookmark me-2"></i>Review Course
+                        </a>
+                        <a href="{% url 'onlinecourse:index' %}" class="btn btn-outline-success btn-lg">
+                            <i class="bi bi-mortarboard me-2"></i>Explore More Courses
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Failed Result -->
+        <div class="card result-card">
+            <div class="result-header failure-bg">
+                <div class="result-icon">
+                    <i class="bi bi-emoji-frown"></i>
+                </div>
+                <h1 class="display-4 fw-bold">Keep Learning!</h1>
+                <p class="lead">You didn't pass this time, but there's still time to improve.</p>
+                <div class="result-summary">{{ grade }}%</div>
+                <p class="lead">Don't give up, {{ user.first_name }}! Review the material and try again.</p>
+            </div>
+            
+            <div class="card-body text-center py-5">
+                <div class="row">
+                    <div class="col-md-6 mx-auto">
+                        <div class="alert alert-warning">
+                            <h5><i class="bi bi-lightbulb me-2"></i>Study Tip</h5>
+                            <p>Review the questions below and strengthen your understanding of the concepts.</p>
+                        </div>
+                        
+                        <a href="{% url 'onlinecourse:course_details' course.id %}" class="btn btn-warning btn-lg me-2">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Retake Exam
+                        </a>
+                        <a href="{% url 'onlinecourse:index' %}" class="btn btn-outline-warning btn-lg">
+                            <i class="bi bi-journal me-2"></i>Review Lessons
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Detailed Results -->
+        <div class="card mt-5 shadow-sm border-0">
+            <div class="card-header bg-white py-4 border-bottom-0">
+                <h3 class="mb-0 fw-bold text-center"><i class="bi bi-clipboard-data me-2"></i>Exam Review</h3>
+                <p class="text-muted text-center mb-0">Review your answers and understand the correct solutions</p>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        {% for question in course.question_set.all %}
+                        {% if question.is_active %}
+                        <div class="card question-card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ forloop.counter }}. {{ question.content }}</h5>
+                                <p class="text-muted">Difficulty: <span class="badge bg-secondary">{{ question.difficulty_level|title }}</span></p>
+                                
+                                <div class="mt-3">
+                                    {% for choice in question.choice_set.all %}
+                                    {% if choice.is_correct and choice in choices %}
+                                    <div class="p-3 mb-2 rounded correct-answer">
+                                        <i class="bi bi-check-circle-fill me-2"></i>{{ choice.content }}
+                                    </div>
+                                    {% else %}{% if choice.is_correct and not choice in choices %}
+                                    <div class="p-3 mb-2 rounded not-selected">
+                                        <i class="bi bi-check-circle me-2"></i>Correct answer: {{ choice.content }}
+                                    </div>
+                                    {% else %}{% if not choice.is_correct and choice in choices %}
+                                    <div class="p-3 mb-2 rounded wrong-answer">
+                                        <i class="bi bi-x-circle-fill me-2"></i>Your answer: {{ choice.content }}
+                                    </div>
+                                    {% else %}
+                                    <div class="p-3 mb-2 rounded bg-light">
+                                        <i class="bi bi-circle me-2"></i>{{ choice.content }}
+                                    </div>
+                                    {% endif %}{% endif %}{% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Cyber Force Academy</h5>
+                    <p class="text-light">Empowering cybersecurity professionals with advanced training and cutting-edge education since 2025.</p>
+                </div>
+                
+                <div class="col-md-2 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'onlinecourse:index' %}" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">About</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Courses</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Popular Courses</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Cybersecurity</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Data Science</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Cloud Computing</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Web Development</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3">
+                    <h5>Need Help?</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-headset me-2"></i>Support Center</a></li>
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-question-circle me-2"></i>FAQs</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p class="mb-0 text-light">&copy; 2025 Cyber Force Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

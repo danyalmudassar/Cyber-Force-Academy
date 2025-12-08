@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>{{ course.name }} Progress | Cyber Force Academy</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .lesson-item {
+            border-left: 4px solid #dee2e6;
+            transition: all 0.3s;
+        }
+        .lesson-item.completed {
+            border-left-color: #28a745;
+        }
+        .lesson-item.in-progress {
+            border-left-color: #007bff;
+        }
+        .lesson-item.not-started {
+            border-left-color: #dee2e6;
+        }
+        .progress {
+            height: 12px;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            margin-top: 60px;
+            padding: 40px 0;
+        }
+        .breadcrumb {
+            background-color: transparent;
+        }
+        .completion-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        .completion-check.completed {
+            background-color: #28a745;
+            color: white;
+        }
+        .completion-check.not-completed {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'onlinecourse:index' %}">
+                <i class="bi bi-shield-lock me-2" style="color: #005493;"></i>
+                <span class="fw-bold">Cyber Force Academy</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'onlinecourse:index' %}"><i class="bi bi-house-door"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'onlinecourse:my_courses' %}"><i class="bi bi-journal-bookmark"></i> My Courses</a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.first_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'onlinecourse:logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item me-2">
+                        <a class="btn btn-outline-primary" href="{% url 'onlinecourse:login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{% url 'onlinecourse:registration' %}"><i class="bi bi-person-plus"></i> Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'onlinecourse:index' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'onlinecourse:my_courses' %}">My Courses</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ course.name }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="container flex-grow-1 py-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white py-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="mb-2">{{ course.name }}</h1>
+                        <p class="mb-0">{{ course.description }}</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div class="bg-white bg-opacity-20 rounded p-3">
+                            <h3 class="text-white mb-1">{{ progress.progress_percentage|floatformat:0 }}%</h3>
+                            <p class="text-white mb-0">Complete</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress.progress_percentage }}%;" aria-valuenow="{{ progress.progress_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                <span class="text-dark fw-bold">{{ progress.progress_percentage|floatformat:0 }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <p class="mb-0">
+                            <strong>{{ progress.lesson_completed.count }}</strong> of <strong>{{ lessons|length }}</strong> lessons completed
+                        </p>
+                    </div>
+                </div>
+                
+                <h3 class="mb-4"><i class="bi bi-journal me-2"></i>Course Lessons</h3>
+                
+                {% for lesson in lessons %}
+                <div class="card lesson-item mb-3 {% if lesson in progress.lesson_completed.all %}completed{% else %}not-started{% endif %}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="completion-check {% if lesson in progress.lesson_completed.all %}completed{% else %}not-completed{% endif %} me-3">
+                                    {% if lesson in progress.lesson_completed.all %}
+                                    <i class="bi bi-check"></i>
+                                    {% else %}
+                                    <i class="bi bi-x"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">Lesson {{ forloop.counter }}: {{ lesson.title }}</h5>
+                                    <p class="text-muted mb-0 small">
+                                        {% if lesson.duration > 0 %}<i class="bi bi-clock"></i> {{ lesson.duration }} min{% endif %}
+                                        {% if lesson.is_preview %}<span class="badge bg-info ms-2">Preview</span>{% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                                {% if lesson in progress.lesson_completed.all %}
+                                <span class="badge bg-success">Completed</span>
+                                {% else %}
+                                <a href="{% url 'onlinecourse:course_details' course.id %}#lesson-{{ lesson.id }}" class="btn btn-outline-primary btn-sm">
+                                    {% if lesson.is_preview %}Preview{% else %}Start{% endif %}
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No lessons available for this course yet.
+                </div>
+                {% endfor %}
+                
+                <div class="mt-4">
+                    <a href="{% url 'onlinecourse:course_details' course.id %}" class="btn btn-primary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Course
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Cyber Force Academy</h5>
+                    <p class="text-light">Empowering cybersecurity professionals with advanced training and cutting-edge education since 2025.</p>
+                </div>
+                
+                <div class="col-md-2 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'onlinecourse:index' %}" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">About</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Courses</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Popular Courses</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Cybersecurity</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Data Science</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Cloud Computing</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Web Development</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3">
+                    <h5>Need Help?</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-headset me-2"></i>Support Center</a></li>
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
+                        <li><a href="#" class="text-light text-decoration-none"><i class="bi bi-question-circle me-2"></i>FAQs</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p class="mb-0 text-light">&copy; 2025 Cyber Force Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Function to update lesson completion
+        function markLessonComplete(courseId, lessonId) {
+            fetch(`/onlinecourse/update_progress/${courseId}/${lessonId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update UI to reflect completion
+                    location.reload(); // Simple way to refresh the page after completion
+                }
+            });
+        }
+    </script>
+</body>
+</html>

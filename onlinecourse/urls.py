@@ -17,6 +17,12 @@ urlpatterns = [
     # ex: /enroll/5/
     path('<int:course_id>/enroll/', views.enroll, name='enroll'),
 
+    # New functionality
+    path('my-courses/', views.my_courses, name='my_courses'),
+    path('course/<int:course_id>/progress/', views.course_progress, name='course_progress'),
+    path('update_progress/<int:course_id>/<int:lesson_id>/', views.update_progress, name='update_progress'),
+    path('search/', views.search_courses, name='search'),
+
     path('<int:course_id>/submit/', views.submit, name="submit"),
     path('course/<int:course_id>/submission/<int:submission_id>/result/', views.show_exam_result, name="exam_result"),
     path('<int:course_id>/start_exam/', views.start_exam_session, name="start_exam_session"),
